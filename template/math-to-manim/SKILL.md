@@ -12,6 +12,37 @@ Transform any concept into professional mathematical animations using a six-agen
 
 Instead of training on example animations, this system recursively asks: **"What must I understand BEFORE this concept?"** This builds pedagogically sound animations that flow naturally from foundation concepts to advanced topics.
 
+## Operating Modes
+
+This skill operates in TWO distinct modes:
+
+### 1. Teaching Mode (Default)
+- **Purpose**: Explain concepts from first principles
+- **Input**: Concept name (e.g., "quantum tunneling", "Pythagorean theorem")
+- **Structure**: Concept tree (recursive prerequisites)
+- **Foundation**: High school graduate baseline
+- **Style**: Pedagogical explanation using the reverse knowledge tree
+
+### 2. Problem-Solving Mode (JEE/NEET)
+- **Purpose**: Solve competitive exam problems step-by-step
+- **Input**: LaTeX problem statement with Given/Find (e.g., "A projectile is fired with u=20m/s at θ=30°. Find max height and range.")
+- **Structure**: Solution tree (step-by-step solution path)
+- **Foundation**: Indian NCERT Class 10 baseline
+- **Style**: 70% solving, 30% explaining (interleaved)
+- **Visual**: Color-coded (Given=GREEN, Unknown=YELLOW, Focus=BLUE, Answer=GOLD) with problem-specific diagrams (FBDs, trajectories, circuits)
+
+## Mode Detection
+
+The system automatically detects which mode to use based on the input:
+
+**Trigger Problem-Solving Mode if**:
+- Input contains a LaTeX problem statement with numerical values and units
+- Keywords present: "JEE", "NEET", "solve this problem", "step-by-step solution"
+- Explicit structure: "Given:", "Find:", "Calculate:", "Determine:"
+- User specifies `mode: "problem-solving"` parameter
+
+**Otherwise**: Default to Teaching Mode
+
 ## When to Use This Skill
 
 Invoke this workflow when:
@@ -172,6 +203,8 @@ The pipeline generates:
 
 ## Quick Start
 
+### Teaching Mode (Concept Explanation)
+
 For immediate use, follow this simplified pattern:
 
 1. **Parse**: Extract the core concept from user input
@@ -181,3 +214,19 @@ For immediate use, follow this simplified pattern:
 5. **Generate**: Produce working Manim code
 
 The key insight: verbose, specific prompts with exact LaTeX and visual specifications produce dramatically better code than vague descriptions.
+
+### Problem-Solving Mode (JEE/NEET Problems)
+
+For solving competitive exam problems:
+
+1. **Parse Problem**: Extract given values, unknowns, constraints from LaTeX problem statement
+2. **Decompose Solution**: Build solution tree (NOT prerequisite tree) - what steps lead to the answer?
+3. **Enrich Steps**: Add equations before/after each step, identify concepts used
+4. **Design Visuals**: Apply problem-specific visuals (FBD, trajectory, circuit) with color coding (Given=GREEN, Unknown=YELLOW, Answer=GOLD)
+5. **Compose Narrative**: 70% solving, 30% explaining interleaved (15s solve, 5s explain per step)
+6. **Generate Code**: Produce color-coded Manim code with problem-specific diagrams
+
+**Important Differences**:
+- Foundation baseline: NCERT Class 10 (India) - see `ncert-class10-foundation.md`
+- Stop recursion at concepts listed in foundation document
+- Reference: See `jee-neet-problem-solving.md` for complete problem-solving logic

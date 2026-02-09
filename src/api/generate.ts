@@ -12,10 +12,11 @@ const gateway = createGateway({
 interface GenerateRequest {
   topic: string;
   model?: string;
+  mode?: 'teaching' | 'problem-solving';
 }
 
 export async function handleGenerate(body: GenerateRequest) {
-  const { topic, model } = body;
+  const { topic, model, mode } = body;
   const requestId = randomUUID();
   const outputDir = join(process.cwd(), "generated", requestId);
   const resolvedModel = model || "anthropic/claude-haiku-4.5";
@@ -31,11 +32,18 @@ export async function handleGenerate(body: GenerateRequest) {
   const tools = await getTools(resolvedModel);
   const system = getSystemPrompt(resolvedModel);
 
+  // Add mode hint to prompt
+  const modeHint = mode === 'problem-solving'
+    ? "\n\nMODE: Problem-Solving (JEE/NEET). Use solution tree, 70/30 solve-explain, color coding (GREEN=given, YELLOW=unknown, BLUE=focus, GOLD=answer), NCERT Class 10 baseline."
+    : mode === 'teaching'
+    ? "\n\nMODE: Teaching (concept explanation from first principles)."
+    : "";  // Default: no hint, let system detect from topic content
+
   console.log("🚀 Calling AI model with streamText...");
   const result = streamText({
     model: gateway(resolvedModel),
     system,
-    prompt: `Create a Manim animation for the topic: "${topic}"\n\nWrite all output files (JSON, TXT, PY) into the directory: ${outputDir}`,
+    prompt: `Create a Manim animation for the topic: "${topic}"${modeHint}\n\nWrite all output files (JSON, TXT, PY) into the directory: ${outputDir}`,
     tools,
     stopWhen: stepCountIs(50),
     onError({ error }) {
