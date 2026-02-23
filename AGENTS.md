@@ -38,3 +38,9 @@
 - Required `.env` values: `AI_GATEWAY_API_KEY`. Optional: `PORT` (defaults to 3001).
 - Manim CE must be installed on the host for validation and rendering.
 - Local runs should ensure Python is available for validation and that `generated/` is writable.
+
+## Rendering with Watermark
+- `scripts/render.py` renders Manim animations with "© Vibe Ask" watermark overlay (bottom-right, 70% opacity).
+- Usage: `python3 scripts/render.py <animation.py> <SceneName> -q <l|m|h|k>`
+- Options: `-w "text"` (custom watermark), `--no-watermark` (skip), `--keep-original`, `--font-size N`, `--opacity 0.0-1.0`
+- Requires: FFmpeg, PIL/Pillow (`pip install Pillow`)
